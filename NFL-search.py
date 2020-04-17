@@ -78,6 +78,4 @@ def getPlayers():
 writePlayer(getPlayers())
 
 
-         
-
-
+        
