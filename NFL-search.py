@@ -30,8 +30,6 @@ def getPlayers():
 
     for i in alphabet:
         print(f"Processing players starting with {i}...")
-        if i == "B":
-            break;
 
         website_url = requests.get(base_url + "/players/"+i+"/").text
         soup = BeautifulSoup(website_url,'lxml')
@@ -44,8 +42,6 @@ def getPlayers():
             total_transactions = 0
             j += 1
 
-            if j == 20:
-                break;
             try:
                 time.sleep(2)
 
