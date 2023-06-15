@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup, Comment
 import requests
 import csv
 import time
+import random
 
 alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 base_url = "https://www.pro-football-reference.com"
@@ -39,12 +40,11 @@ def getPlayers():
         highest_num_transactions = 0
 
         for player in players_in_player_table:
+
             total_transactions = 0
             j += 1
 
             try:
-                time.sleep(2)
-
                 start_year, end_year = player.text.split(" ")[-1].split("-")
 
                 if int(end_year) < 1990:
@@ -54,9 +54,14 @@ def getPlayers():
                 years_played = int(end_year) - int(start_year) + 1
                 # PLAYER NAME
                 player_name = player.find("a").text
+
                 print(f"Processing player: {player_name}. {round((j / len(players_in_player_table)) * 100, 2)}% done with {i}")
 
                 player_link = player.find("a").get('href')
+
+                time_to_wait = random.uniform(2, 4)
+                time.sleep(time_to_wait)
+
                 player_link_res = requests.get(base_url + player_link).text
 
                 player_soup = BeautifulSoup(player_link_res,'lxml')
@@ -95,6 +100,8 @@ def getPlayers():
                         # PLAYER HIGH SCHOOL
                         player_high_school = p.a.text  
 
+                player_transactions = []
+
                 try:
                     html_player_soup = BeautifulSoup(player_link_res,'html.parser')
 
@@ -118,13 +125,18 @@ def getPlayers():
                                 highest_num_transactions = total_transactions
 
                 except Exception as e:
-                    player_transactions = ""
+                    print(player, e)
+                    continue
 
                 player_teams = {}
                 player_years_played = []
 
                 try:
                     career_game_log_link = player_soup.find('a', string='Career').get('href')
+
+                    time_to_wait = random.uniform(2, 4)
+                    time.sleep(time_to_wait)
+
                     career_game_log_link_res = requests.get(base_url + career_game_log_link).text
 
                     game_log_soup = BeautifulSoup(career_game_log_link_res,'lxml')
